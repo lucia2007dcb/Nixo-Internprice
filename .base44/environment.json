@@ -1,0 +1,12 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "GEMINI_API_KEY",
+      "description": "Gemini API key from Google AI Studio (https://aistudio.google.com/apikey). The app boots without it, but /api/chat returns 503 until it is set.",
+      "requiredAtBoot": false
+    }
+  ]
+}
