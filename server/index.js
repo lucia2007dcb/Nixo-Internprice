@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json({ limit: '1mb' }));
 
 const PORT = process.env.PORT || 8000;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 
 const SYSTEM_PROMPT = [
   'You are JARVIS, Tony Stark\'s AI assistant from Iron Man.',
@@ -66,7 +66,7 @@ app.post('/api/chat', async (req, res) => {
       body: JSON.stringify({
         system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
         contents,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
       })
     });
 
