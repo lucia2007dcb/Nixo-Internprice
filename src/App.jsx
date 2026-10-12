@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ArcReactor from './components/ArcReactor.jsx';
 import ChatLog from './components/ChatLog.jsx';
+import HudOverlay from './components/HudOverlay.jsx';
 
 export default function App() {
   const [messages, setMessages] = useState([]);
@@ -11,8 +12,26 @@ export default function App() {
   const [voiceSupported] = useState(
     () => Boolean(window.SpeechRecognition || window.webkitSpeechRecognition)
   );
+  const [telemetry, setTelemetry] = useState(null);
   const messagesRef = useRef(messages);
   const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    let active = true;
+    const poll = () =>
+      fetch('/api/telemetry')
+        .then((r) => r.json())
+        .then((data) => {
+          if (active) setTelemetry(data);
+        })
+        .catch(() => {});
+    poll();
+    const id = setInterval(poll, 3000);
+    return () => {
+      active = false;
+      clearInterval(id);
+    };
+  }, []);
 
   const speak = useCallback((text) => {
     try {
@@ -119,6 +138,7 @@ export default function App() {
 
   return (
     <div className="hud">
+      <HudOverlay telemetry={telemetry} />
       <header className="hud-top">
         <div className="hud-title">J.A.R.V.I.S.</div>
         <div className="hud-status">

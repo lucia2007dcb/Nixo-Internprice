@@ -1,10 +1,12 @@
 import express from 'express';
+import os from 'node:os';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 
 const PORT = process.env.PORT || 8000;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+let requestCount = 0;
 
 const SYSTEM_PROMPT = [
   'You are JARVIS, Tony Stark\'s AI assistant from Iron Man.',
@@ -24,7 +26,21 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
+app.get('/api/telemetry', (_req, res) => {
+  const cpuCores = os.cpus().length || 1;
+  res.json({
+    uptimeSec: Math.round(process.uptime()),
+    memoryMb: Math.round(process.memoryUsage().rss / (1024 * 1024)),
+    loadPct: Math.min(100, Math.round((os.loadavg()[0] / cpuCores) * 100)),
+    cpuCores,
+    queriesServed: requestCount,
+    model: GEMINI_MODEL,
+    apiKeyConfigured: Boolean(process.env.GEMINI_API_KEY)
+  });
+});
+
 app.post('/api/chat', async (req, res) => {
+  requestCount += 1;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(503).json({

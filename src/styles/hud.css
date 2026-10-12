@@ -1,6 +1,7 @@
 :root {
   --hud-bg: #050a12;
-  --hud-panel: rgba(10, 25, 47, 0.55);
+  --hud-panel: rgba(10, 25, 47, 0.35);
+  --hud-glass: rgba(12, 30, 56, 0.38);
   --hud-cyan: #29d8ff;
   --hud-cyan-dim: rgba(41, 216, 255, 0.35);
   --hud-gold: #ffb64c;
@@ -53,6 +54,14 @@ body {
   mix-blend-mode: screen;
 }
 
+.hud-top,
+.chatlog,
+.hud-input {
+  background: var(--hud-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 .hud-top {
   display: flex;
   align-items: center;
@@ -60,7 +69,7 @@ body {
   padding: 10px 16px;
   border: 1px solid var(--hud-cyan-dim);
   border-radius: 8px;
-  background: var(--hud-panel);
+  background: var(--hud-glass);
   box-shadow: 0 0 18px rgba(41, 216, 255, 0.12), inset 0 0 18px rgba(41, 216, 255, 0.06);
 }
 
@@ -130,6 +139,7 @@ body {
   position: relative;
   width: 190px;
   height: 190px;
+  margin-bottom: 26px; /* room for the label below the rings */
   flex-shrink: 0;
   cursor: pointer;
   outline: none;
@@ -250,6 +260,157 @@ body {
   letter-spacing: 3px;
   color: var(--hud-cyan);
   text-shadow: 0 0 8px var(--hud-cyan-dim);
+}
+
+/* ---- HUD overlay (glass readouts, corners, ticker) ---- */
+
+.hud-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  font-family: 'Consolas', 'Menlo', monospace;
+}
+
+.corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+}
+
+.corner-tl {
+  top: 6px;
+  left: 6px;
+  border-top: 2px solid var(--hud-cyan);
+  border-left: 2px solid var(--hud-cyan);
+}
+
+.corner-tr {
+  top: 6px;
+  right: 6px;
+  border-top: 2px solid var(--hud-cyan);
+  border-right: 2px solid var(--hud-cyan);
+}
+
+.corner-bl {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 2px solid var(--hud-cyan);
+  border-left: 2px solid var(--hud-cyan);
+}
+
+.corner-br {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 2px solid var(--hud-cyan);
+  border-right: 2px solid var(--hud-cyan);
+}
+
+.glass-panel {
+  position: absolute;
+  top: 64px;
+  width: 132px;
+  padding: 10px;
+  border: 1px solid var(--hud-cyan-dim);
+  border-radius: 6px;
+  background: var(--hud-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 14px rgba(41, 216, 255, 0.1), inset 0 0 18px rgba(41, 216, 255, 0.05);
+}
+
+.panel-sys {
+  left: 10px;
+}
+
+.panel-clock {
+  right: 10px;
+  text-align: right;
+}
+
+.panel-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--hud-cyan);
+  opacity: 0.85;
+  margin-bottom: 7px;
+  text-shadow: 0 0 6px var(--hud-cyan-dim);
+}
+
+.clock {
+  font-size: 19px;
+  letter-spacing: 2px;
+  color: var(--hud-cyan);
+  text-shadow: 0 0 10px var(--hud-cyan-dim);
+  margin-bottom: 6px;
+}
+
+.readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 9.5px;
+  letter-spacing: 1px;
+  color: var(--hud-muted);
+  margin-bottom: 3px;
+}
+
+.readout b {
+  color: var(--hud-text);
+  font-weight: 600;
+}
+
+.meter {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(41, 216, 255, 0.12);
+  margin: 2px 0 7px;
+  overflow: hidden;
+}
+
+.meter i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--hud-cyan);
+  box-shadow: 0 0 6px var(--hud-cyan);
+  transition: width 0.6s ease;
+}
+
+.ticker {
+  position: absolute;
+  bottom: 84px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--hud-muted);
+  animation: ticker-pulse 3s ease-in-out infinite;
+}
+
+@keyframes ticker-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@media (max-width: 719px) {
+  .glass-panel {
+    width: 118px;
+    top: 60px;
+  }
+  .ticker {
+    bottom: 78px;
+    gap: 12px;
+  }
 }
 
 /* ---- Chat log ---- */
